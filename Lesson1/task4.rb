@@ -14,8 +14,8 @@ if D < 0
 elsif D == 0
   puts "Дискриминант = #{D}, корень = #{-b / (2 * a)}."
 else
-  m_sqrt = Math.sqrt(D)
-  x1 = (-b + m_sqrt) / (2 * a)
-  x2 = (-b - m_sqrt) / (2 * a)
+  D_sqrt = Math.sqrt(D)
+  x1 = (-b + D_sqrt) / (2 * a)
+  x2 = (-b - D_sqrt) / (2 * a)
   puts "Дискриминант = #{D}, корень 1 = #{x1}, корень 2 = #{x2}"
 end
