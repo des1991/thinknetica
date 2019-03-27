@@ -1,5 +1,4 @@
-cart = Hash.new
-cart_sum = 0
+cart = {}
 
 loop do
   print "Название товара: "
@@ -20,8 +19,6 @@ loop do
   }
 end
 
-
-
-cart.each_value { |product| cart_sum += product[:sum] }
+cart_sum = cart.sum { |product, param| param[:sum] }
 
 puts cart_sum

@@ -1,11 +1,9 @@
 vowels = ['a', 'e', 'i', 'o', 'u', 'y']
-index = 1
 
-vowels_with_index = Hash.new
+vowels_with_index = {}
 
-for letter in 'a'..'z'
-  vowels_with_index[letter] = index if vowels.include? letter
-  index += 1
+('a'..'z').to_a.each.with_index(1) do |letter, position|
+  vowels_with_index[letter] = position if vowels.include? letter
 end
 
 puts vowels_with_index
