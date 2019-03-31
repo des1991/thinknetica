@@ -1,5 +1,5 @@
 class Station
-  attr_reader :trains
+  attr_reader :name, :trains
 
   def initialize(name)
     @name = name
@@ -20,28 +20,25 @@ class Station
 end
 
 class Route
+  attr_reader :stations
+
   def initialize(from, to)
-    @from = from
-    @to = to
-    @stations = [@from, @to]
+    @stations = [from, to]
   end
 
   def add_station(station)
     @stations.insert(-2, station)
   end
 
-  def delete_station(station)
-      @stations.delete(station)
-  end
+  def remove_station(station)
+    return "Error! Can't remove start/end station!" if station == @stations[0] || station == @stations[-1]
 
-  def stations
-    @stations.each { |station| puts station }
+    @stations.delete(station)
   end
 end
 
 class Train
-  attr_accessor :speed
-  attr_reader :type
+  attr_reader :type, :speed
 
   def initialize(number, type, wagons)
     @number = number
@@ -54,29 +51,56 @@ class Train
     @speed = 0
   end
 
+  def speed=(speed)
+    return "Error! Speed must be positive number!" if speed < 0
+
+    @speed = speed
+  end
+
   def wagons
     @wagons
   end
 
-  def add_wagon
-    @wagons += 1
-  end
+  def wagon_action(action)
+    stop
 
-  def remove_wagon
-    @wagons -= 1
+    if action == "add"
+      @wagons += 1
+    elsif action == "remove"
+      return "Error! Train has no wagons!" if wagons == 0
+
+      @wagons -= 1
+    end      
   end
 
   def route=(route)
     @route = route
     @position = 0
+    @route.stations[@position].add_train(self) 
   end
 
   def go_forward
+    return "Error! Train should't be on the end station!" if @position == @route.stations.length
+
+    change_station("forward")
     @position += 1
   end
 
   def go_back
+    return "Error! Train should't be on the start station!" if @position == 0
+
+    change_station("back")
     @position -= 1
+  end
+
+  def change_station(action)
+    @route.stations[@position].departure(self)
+
+    if action == "forward"
+      @route.stations[@position + 1].add_train(self)
+    elsif action == "back"            
+      @route.stations[@position - 1].add_train(self)
+    end
   end
 
   def current_station
@@ -84,10 +108,10 @@ class Train
   end
 
   def prev_station
-    @route.stations[@position-1]
+    @route.stations[@position - 1]
   end
 
   def next_station
-    @route.stations[@position+1]
+    @route.stations[@position + 1]
   end
 end
