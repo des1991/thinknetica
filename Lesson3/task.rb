@@ -31,7 +31,7 @@ class Route
   end
 
   def remove_station(station)
-    return "Error! Can't remove start/end station!" if station == @stations[0] || station == @stations[-1]
+    return nil if stations.values_at(0, 1).include?(station)
 
     @stations.delete(station)
   end
@@ -51,10 +51,14 @@ class Train
     @speed = 0
   end
 
-  def speed=(speed)
-    return "Error! Speed must be positive number!" if speed < 0
+  def increase_speed
+    @speed += 1
+  end
 
-    @speed = speed
+  def decrease_speed
+    return nil if @speed == 0
+
+    @speed -= 1
   end
 
   def wagons
@@ -64,10 +68,10 @@ class Train
   def wagon_action(action)
     stop
 
-    if action == "add"
+    if action == :add
       @wagons += 1
-    elsif action == "remove"
-      return "Error! Train has no wagons!" if wagons == 0
+    elsif action == :remove
+      return nil if wagons == 0
 
       @wagons -= 1
     end      
@@ -80,25 +84,25 @@ class Train
   end
 
   def go_forward
-    return "Error! Train should't be on the end station!" if @position == @route.stations.length
+    return nil if @position == @route.stations.length
 
-    change_station("forward")
+    change_station(:forward)
     @position += 1
   end
 
   def go_back
-    return "Error! Train should't be on the start station!" if @position == 0
+    return nil if @position == 0
 
-    change_station("back")
+    change_station(:back)
     @position -= 1
   end
 
   def change_station(action)
     @route.stations[@position].departure(self)
 
-    if action == "forward"
+    if action == :foward
       @route.stations[@position + 1].add_train(self)
-    elsif action == "back"            
+    elsif action == :back            
       @route.stations[@position - 1].add_train(self)
     end
   end
