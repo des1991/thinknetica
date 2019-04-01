@@ -31,9 +31,7 @@ class Route
   end
 
   def remove_station(station)
-    return nil if stations.values_at(0, 1).include?(station)
-
-    @stations.delete(station)
+    @stations.delete(station) unless stations.values_at(0, -1).include?(station)
   end
 end
 
@@ -56,9 +54,7 @@ class Train
   end
 
   def decrease_speed
-    return nil if @speed == 0
-
-    @speed -= 1
+    @speed -= 1 unless @speed == 0
   end
 
   def wagons
@@ -71,9 +67,7 @@ class Train
     if action == :add
       @wagons += 1
     elsif action == :remove
-      return nil if wagons == 0
-
-      @wagons -= 1
+      @wagons -= 1 unless wagons == 0
     end      
   end
 
@@ -84,17 +78,17 @@ class Train
   end
 
   def go_forward
-    return nil if @position == @route.stations.length
-
-    change_station(:forward)
-    @position += 1
+    unless @position == @route.stations.length
+      change_station(:forward)
+      @position += 1
+    end    
   end
 
   def go_back
-    return nil if @position == 0
-
-    change_station(:back)
-    @position -= 1
+    unless @position == 0
+      change_station(:back)
+      @position -= 1
+    end    
   end
 
   def change_station(action)
