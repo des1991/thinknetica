@@ -53,10 +53,10 @@ class RailRoad
 
   def start
     loop do
-      self.puts_separator
+      puts_separator
 
       puts "Программа управления железной дороги:"
-      self.puts_menus
+      puts_menus
       print "Введите число из меню: "
       selected_menu = gets.to_i
 
@@ -65,31 +65,31 @@ class RailRoad
       stations = []
       trains = []
 
-      self.puts_separator
+      puts_separator
 
       if selected_menu == 1 # Создавать станции
-        self.create_station
+        create_station
 
       elsif selected_menu == 2 # Создавать поезда
-        self.create_train
+        create_train
           
       elsif selected_menu == 3 # Создавать маршруты и управлять станциями в нем (добавлять, удалять)
-        self.create_route
+        create_route
 
       elsif selected_menu == 4 # Назначать маршрут поезду
-        self.set_route_to_train
+        set_route_to_train
 
       elsif selected_menu == 5 # Добавлять вагоны к поезду
-        self.add_wagon_to_train
+        add_wagon_to_train
 
       elsif selected_menu == 6 # Отцеплять вагоны от поезда
-        self.remove_wagon_from_train
+        remove_wagon_from_train
 
       elsif selected_menu == 7 # Перемещать поезд по маршруту вперед и назад
-        self.move_train
+        move_train
 
       elsif selected_menu == 8 # Просматривать список станций и список поездов на станции
-        self.browse_trains_in_station
+        browse_trains_in_station
 
       end
     end
@@ -136,7 +136,7 @@ class RailRoad
 
   def create_route
     puts "Создать маршрут:"
-    self.puts_stations
+    puts_stations
     print "Укажите маршрут от - до (в формате '1 - 2'): "
     route_from_to = gets.chomp.split(" - ")
     route_from = @stations[route_from_to[0].to_i - 1]
@@ -153,9 +153,9 @@ class RailRoad
       route_selected_menu = gets.to_i
 
       if route_selected_menu == 1
-        self.change_stations_in_route(route, :add)
+        change_stations_in_route(route, :add)
       elsif route_selected_menu == 2
-        self.change_stations_in_route(route, :remove)
+        change_stations_in_route(route, :remove)
       elsif route_selected_menu == 3
         break
       end
@@ -171,7 +171,7 @@ class RailRoad
       puts "Удалить промежуточную станцию:"
     end    
 
-    station = self.choose_station
+    station = choose_station
 
     if action == :add
       route.add_station(station)
@@ -182,10 +182,10 @@ class RailRoad
 
   def set_route_to_train
     puts "Назначить маршрут:"
-    train = self.choose_train
+    train = choose_train
     puts "Выбран поезд '#{train.number}'"
 
-    route = self.choose_route
+    route = choose_route
 
     train.route = route
     puts "Поезду '#{train.number}' задан маршрут." 
@@ -206,7 +206,7 @@ class RailRoad
       puts "Отцепить вагон от поезда:"
     end
 
-    train = self.choose_train 
+    train = choose_train 
 
     if action == :add
       if train.type == :passenger
@@ -223,7 +223,7 @@ class RailRoad
 
   def move_train
     puts "Переместить поезд по маршруту:"
-    train = self.choose_train
+    train = choose_train
 
     puts "1 - Вперед"
     puts "2 - Назад"
@@ -235,32 +235,30 @@ class RailRoad
     elsif train_action == 2
       train.move_back
     end
-
-    puts train.current_station.inspect
   end
 
   def browse_trains_in_station
     puts "Список станций и список поездов на станции:"
-    station = self.choose_station
+    station = choose_station
 
     puts "Список поездов на станции '#{station.name}':"
     station.trains.each_with_index { |train, index| puts "#{index + 1} - #{train.number}" }
   end
 
   def choose_station
-    self.puts_stations
+    puts_stations
     print "Выберите станцию из списка: "
     @stations[gets.to_i - 1]
   end
 
   def choose_train
-    self.puts_trains
+    puts_trains
     print "Выберите поезд из списка: "
     @trains[gets.to_i - 1]
   end
 
   def choose_route
-    self.puts_routes
+    puts_routes
     print "Выберите маршрут из списка: "
     @routes[gets.to_i - 1]
   end
