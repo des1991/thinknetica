@@ -7,17 +7,17 @@ class Train
 
   attr_reader :number, :speed, :wagons, :type
 
-  @@trains = []
+  @@trains = {}
 
   def self.find(number)
-    @@trains.detect { |train| train.number == number }
+    @@trains[number]
   end
 
   def initialize(number)
     @number = number
     @speed = 0
     @wagons = []
-    @@trains << self
+    @@trains[number] = self
     register_instance
   end
 
@@ -40,11 +40,11 @@ class Train
   end
 
   def move_forward    
-      change_station(:forward) unless @position == (@route.stations.length - 1)
+    change_station(:forward) unless @position == (@route.stations.length - 1)
   end
 
   def move_back    
-      change_station(:back) unless @position == 0
+    change_station(:back) unless @position == 0
   end
 
   def current_station
