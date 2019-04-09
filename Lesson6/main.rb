@@ -67,31 +67,24 @@ class RailRoad
 
       puts_separator
 
-      if selected_menu == 1 # Создавать станции
+      case selected_menu
+      when 1 # Создавать станции
         create_station
-
-      elsif selected_menu == 2 # Создавать поезда
+      when 2 # Создавать поезда
         create_train
-          
-      elsif selected_menu == 3 # Создавать маршруты и управлять станциями в нем (добавлять, удалять)
+      when 3 # Создавать маршруты и управлять станциями в нем (добавлять, удалять)
         create_route
-
-      elsif selected_menu == 4 # Назначать маршрут поезду
+      when 4 # Назначать маршрут поезду
         set_route_to_train
-
-      elsif selected_menu == 5 # Добавлять вагоны к поезду
+      when 5 # Добавлять вагоны к поезду
         add_wagon_to_train
-
-      elsif selected_menu == 6 # Отцеплять вагоны от поезда
+      when 6 # Отцеплять вагоны от поезда
         remove_wagon_from_train
-
-      elsif selected_menu == 7 # Перемещать поезд по маршруту вперед и назад
+      when 7 # Перемещать поезд по маршруту вперед и назад
         move_train
-
-      elsif selected_menu == 8 # Просматривать список станций и список поездов на станции
-        browse_trains_in_station
-
-      end
+      when 8 # Просматривать список станций и список поездов на станции
+        browse_trains_in_station          
+      end      
     end
   end
 
@@ -108,39 +101,41 @@ class RailRoad
   end
 
   def create_train
-    begin
+    loop do
       puts "Создать поезд:"
       puts "1 - Пассажирский"
       puts "2 - Грузовой"
       print "Тип: "
       train_type = gets.to_i
 
-      raise "Error! Введите тип из списка!" unless [1, 2].include?(train_type)
-    rescue StandardError => e
-      puts_separator
-      puts e.message
-      puts_separator
-      retry unless [1, 2].include?(train_type)
-    end
-
-    begin
-      print "Номер поезда: "
-      train_number = gets.chomp
-
-      if train_type == 1
-        @trains << PassengerTrain.new(train_number)
-
-        puts "Создан пассажирский поезд с номером '#{train_number}'."
-      elsif train_type == 2
-        @trains << CargoTrain.new(train_number)
-
-        puts "Создан грузовой поезд с номером '#{train_number}'."
+      unless [1, 2].include?(train_type)
+        puts_separator
+        puts "Введите тип из списка!"
+        puts_separator
+        next        
       end
-    rescue StandardError => e
-      puts_separator
-      puts e.message
-      puts_separator
-      retry
+
+      begin
+        print "Номер поезда: "
+        train_number = gets.chomp
+
+        if train_type == 1
+          @trains << PassengerTrain.new(train_number)
+
+          puts "Создан пассажирский поезд с номером '#{train_number}'."
+        elsif train_type == 2
+          @trains << CargoTrain.new(train_number)
+
+          puts "Создан грузовой поезд с номером '#{train_number}'."
+        end
+      rescue StandardError => e
+        puts_separator
+        puts e.message
+        puts_separator
+        retry
+      end  
+
+      break if [1, 2].include?(train_type) 
     end
   end
 

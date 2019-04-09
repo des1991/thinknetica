@@ -16,13 +16,13 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
-    validate!(name, "Name")
+    validate!({ Name: { value: name } })
     @@all << self
     register_instance
   end
 
   def valid?
-    validate!(name, "Name")
+    validate!({ Name: { value: name } })
     true
   rescue
     false

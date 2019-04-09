@@ -21,13 +21,13 @@ class Train
     @number = number
     @speed = 0
     @wagons = []
-    validate!(number, "Number", 5, NUMBER_FORMAT)
+    validate!({ Number: { value: number, length: 5, format: NUMBER_FORMAT } })
     @@trains[number] = self
     register_instance
   end
 
   def valid?
-    validate!(number, "Number", 5, NUMBER_FORMAT)
+    validate!({ Number: { value: number, length: 5, format: NUMBER_FORMAT } })
     true
   rescue
     false
