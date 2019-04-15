@@ -30,9 +30,9 @@ class Route
 
   def validate!(from, to)
     unless from.is_a?(Station) && to.is_a?(Station)
-      raise 'Error! Invalid arguments type.'
+      raise 'Invalid arguments type.'
     end
 
-    raise 'Error! Identical arguments.' if from == to
+    raise 'Identical arguments.' if from == to
   end
 end

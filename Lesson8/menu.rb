@@ -57,10 +57,6 @@ module Menu
     { title: 'Назад', answer: 0, exit: true }
   ].freeze
 
-  def show_menu(menu)
-    menu.each { |item| puts "#{item[:answer]} - #{item[:title]}" }
-  end
-
   def stations_menu
     select_from_menu('Выберите действие: ', STATIONS_MENU, self)
   end
@@ -70,7 +66,8 @@ module Menu
   end
 
   def edit_train
-    train = select_from_list('Выберите поезд: ', show_trains, @trains)
+    show_trains
+    train = select_from_list('Выберите поезд: ', @trains)
 
     select_from_menu('Выберите действие: ', TRAIN_MENU, self, train)
   end
@@ -80,7 +77,8 @@ module Menu
   end
 
   def edit_route
-    route = select_from_list('Выберите маршрут: ', show_routes, @routes)
+    show_routes
+    route = select_from_list('Выберите маршрут: ', @routes)
 
     select_from_menu('Выберите действие: ', ROUTE_MENU, self, route)
   end

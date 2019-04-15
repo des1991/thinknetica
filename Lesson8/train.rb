@@ -1,11 +1,9 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
-require_relative 'validation'
 
 class Train
   include Manufacturer
   include InstanceCounter
-  include Validation
 
   NUMBER_FORMAT = /^[\d\wА-я]{3}-?[\d\wА-я]{2}$/.freeze
 
@@ -21,13 +19,13 @@ class Train
     @number = number
     @speed = 0
     @wagons = []
-    validate!(Number: { value: number, length: 5, format: NUMBER_FORMAT })
+    validate!
     @@trains[number] = self
     register_instance
   end
 
   def valid?
-    validate!(Number: { value: number, length: 5, format: NUMBER_FORMAT })
+    validate!
     true
   rescue StandardError
     false
@@ -64,7 +62,7 @@ class Train
   end
 
   def next_station
-    raise 'Error! No route.' unless @route
+    raise 'No route.' unless @route
     raise 'End station!' if action == :forward &&
                             @position == (@route.stations.length - 1)
 
@@ -72,7 +70,7 @@ class Train
   end
 
   def prev_station
-    raise 'Error! No route.' unless @route
+    raise 'No route.' unless @route
     raise 'Start station!' if action == :back && @position.zero?
 
     @route.stations[@position - 1] unless @position.zero?
@@ -90,7 +88,7 @@ class Train
     @wagons.each { |wagon| yield wagon }
   end
 
-  private
+  protected
 
   def change_station(action)
     @route.stations[@position].departure(self)
@@ -102,5 +100,10 @@ class Train
     end
 
     @route.stations[@position].add_train(self)
+  end
+
+  def validate!
+    raise "'Number' can't be nil." if number.nil?
+    raise "'Number' invalid format." if number !~ NUMBER_FORMAT
   end
 end

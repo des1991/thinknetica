@@ -1,9 +1,7 @@
 require_relative 'instance_counter'
-require_relative 'validation'
 
 class Station
   include InstanceCounter
-  include Validation
 
   attr_reader :name, :trains
 
@@ -16,13 +14,13 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
-    validate!(Name: { value: name })
+    validate!
     @@all << self
     register_instance
   end
 
   def valid?
-    validate!(Name: { value: name })
+    validate!
     true
   rescue StandardError
     false
@@ -42,5 +40,12 @@ class Station
 
   def each_train
     @trains.each { |train| yield train }
+  end
+
+  protected
+
+  def validate!
+    raise "'Name' can't be nil." if name.nil?
+    raise "'Name' can't be empty." if name.empty?
   end
 end

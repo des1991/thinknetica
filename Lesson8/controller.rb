@@ -1,20 +1,22 @@
 module Controller
   protected
 
+  def show_menu(menu)
+    menu.each { |item| puts "#{item[:answer]} - #{item[:title]}" }
+  end
+
   def select_from_menu(msg, menu, controller, arg = nil)
     loop do
-      show_menu(menu)
-
-      print msg
-
-      answer = gets.to_i
-
-      selected = menu.find { |item| answer == item[:answer] }
+      selected = get_answer_from_menu(msg, menu)
 
       next unless selected
       break if selected[:exit]
-      
-      controller.send(selected[:method], arg)
+
+      if arg.nil?
+        controller.send(selected[:method])
+      else
+        controller.send(selected[:method], arg)
+      end
     end
   end
 
@@ -22,6 +24,24 @@ module Controller
     print msg
 
     gets.chomp
+  end
+
+  def get_answer_from_menu(msg, menu)
+    show_menu(menu)
+
+    answer = get_answer(msg).to_i
+
+    menu.find { |item| answer == item[:answer] }
+  end
+
+  def get_from_to(msg, separator, list)
+    from_to = get_answer(msg).split(separator)
+
+    from_to.map!(&:to_i)
+
+    puts from_to.inspect
+
+    [list[from_to.first - 1], list[from_to.last - 1]]
   end
 
   def print_list(msg, list, attr)
@@ -34,13 +54,7 @@ module Controller
     end
   end
 
-  def select_from_list(msg, list, items)
-    list
-
-    get_by_num(msg, items)
-  end
-
-  def get_by_num(msg, items)
+  def select_from_list(msg, items)
     index = 0
 
     loop do
@@ -80,17 +94,35 @@ module Controller
     end
   end
 
+  def show_wagons_capacity(wagon)
+    if wagon.type == :passenger
+      puts "Свободно: #{wagon.free_seats}, Занято: #{wagon.taken_seats}"
+    elsif wagon.type == :cargo
+      puts "Свободно: #{wagon.free_capacity}, Занято: #{wagon.loaded_volume}"
+    end
+  end
+
+  def load_wagon_by_type(wagon)
+    if wagon.type == :passenger
+      wagon.take_seat
+
+      puts 'Место занято.'
+    elsif wagon.type == :cargo
+      wagon.load(get_answer('Введите объем: ').to_i)
+
+      puts 'Объем занят.'
+    end
+  end
+
   def change_stations_in_route(route, action)
     if action == :add
-      station = select_from_list('Выберите станцию: ', show_stations, @stations)
+      show_stations
+      station = select_from_list('Выберите станцию: ', @stations)
 
       route.add_station(station)
     elsif action == :remove
-      station = select_from_list(
-        'Выберите станцию: ',
-        show_stations(route),
-        route.stations
-      )
+      show_stations(route)
+      station = select_from_list('Выберите станцию: ', route.stations)
 
       route.remove_station(station)
     end

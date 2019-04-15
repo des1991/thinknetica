@@ -40,11 +40,11 @@ class RailRoad
   end
 
   def show_trains_on_station
-    station = select_from_list('Выберите станцию: ', show_stations, @stations)
+    show_stations
+    station = select_from_list('Выберите станцию: ', @stations)
 
     station.each_train do |train|
-      print "Номер: #{train.number}, "
-      print "Тип: #{train.type}, "
+      print "Номер: #{train.number}, Тип: #{train.type}, "
       puts "Вагонов: #{train.wagons.length}"
     end
   end
@@ -69,7 +69,8 @@ class RailRoad
   end
 
   def route=(train)
-    route = select_from_list('Выберите маршрут: ', show_routes, @routes)
+    show_routes
+    route = select_from_list('Выберите маршрут: ', @routes)
 
     train.route = route
 
@@ -98,47 +99,29 @@ class RailRoad
     number = 1
 
     train.each_wagon do |wagon|
-      print "#{number} - "
-      print "Номер: #{number}, "
-      print "Тип: #{wagon.type}, "
+      print "#{number} - Номер: #{number}, Тип: #{wagon.type}, "
 
-      if wagon.type == :passenger
-        puts "Свободно: #{wagon.free_seats}, Занято: #{wagon.taken_seats}"
-      elsif wagon.type == :cargo
-        puts "Свободно: #{wagon.free_capacity}, Занято: #{wagon.loaded_volume}"
-      end
+      show_wagons_capacity(wagon)
 
       number += 1
     end
   end
 
   def load_wagon(train)
-    wagon = select_from_list('Выберите вагон: ', show_wagons(train), train.wagons)
+    show_wagons(train)
+    wagon = select_from_list('Выберите вагон: ', train.wagons)
 
-    if wagon.type == :passenger
-      wagon.take_seat
-
-      puts 'Место занято.'
-    elsif wagon.type == :cargo
-      wagon.load(get_answer('Введите объем: ').to_i)
-
-      puts 'Объем занят.'
-    end
+    load_wagon_by_type(wagon)
   end
 
   def create_route
     show_stations
 
-    route_from_to = get_answer('Укажите маршрут (от-до): ').split('-')
+    stations = get_from_to('Укажите маршрут (от-до): ', '-', @stations)
 
-    route_from = @stations[route_from_to.first.to_i - 1]
-    route_to = @stations[route_from_to.last.to_i - 1]
+    @routes << Route.new(stations.first, stations.last)
 
-    route = Route.new(route_from, route_to)
-
-    puts "Маршрут '#{route_from.name} -> #{route_to.name}' создан."
-
-    @routes << route
+    puts 'Маршрут создан.'
   rescue StandardError => e
     puts e.message
 
